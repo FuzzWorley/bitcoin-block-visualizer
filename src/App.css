@@ -14,7 +14,8 @@
   color: white;
 }
 
-.App-intro {
+.unconf-tx-size,
+.current-block-index {
   font-size: large;
 }
 
