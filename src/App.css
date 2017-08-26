@@ -14,8 +14,7 @@
   color: white;
 }
 
-.unconf-tx-size,
-.current-block-index {
+.container {
   font-size: large;
 }
 
