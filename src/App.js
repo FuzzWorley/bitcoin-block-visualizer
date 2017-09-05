@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import logo from './logo.svg'
 import './App.css'
 import request from 'superagent';
+// import request from 'superagent-bluebird-promise'
 
 class App extends Component {
   constructor() {
@@ -13,30 +14,36 @@ class App extends Component {
       totalUnconfirmedTxSize: 0,
       currentBlockHeight: 0,
       avgUnconfTxSize: 0,
-      maxUnconfTxSize: 0,
-      minUnconfTxSize: 10000000,
+      largestUnconfTxSize: 0,
+      smallestUnconfTxSize: 10000000,
       mempoolSizeInMb: 0,
       mempoolTxCount: 0
     }
   }
 
-  fetchMempoolSize() {
+  limitCalls(interval, unconfTxs) {
+    if (unconfTxs.length % interval === 0) {
+      this.setMempoolSize()
+    }
+  }
+
+  setMempoolSize() {
     request.get('https://blockchain.info/charts/mempool-size?format=json&cors=true')
-      .end(function(err, response){
-        var array = response.body.values
-        var size = array[array.length - 1].y
-        var sizeInMb = size / 1000000
-        return sizeInMb
-      })
+    .end(function(err, response){
+      var array = response.body.values
+      var size = array[array.length - 1].y
+      var sizeInMb = size / 1000000
+      this.setState({mempoolSizeInMb: sizeInMb})
+    }.bind(this))
   }
 
   fetchMempoolTxCount() {
     request.get('https://blockchain.info/charts/mempool-count?format=json&cors=true')
-      .end(function(err, response){
-        var array = response.body.values
-        var txCount = array[array.length - 1].y
-        return txCount
-      })
+    .end(function(err, response){
+      var array = response.body.values
+      var txCount = array[array.length - 1].y
+      return txCount
+    })
   }
 
   getAvgTxSize(txs) {
@@ -45,17 +52,17 @@ class App extends Component {
   }
 
   setMaxTxSize(txSize) {
-    if (this.state.maxUnconfTxSize < txSize) {
+    if (this.state.largestUnconfTxSize < txSize) {
       this.setState({
-        maxUnconfTxSize: txSize
+        largestUnconfTxSize: txSize
       })
     }
   }
 
   setMinTxSize(txSize) {
-    if (this.state.minUnconfTxSize > txSize) {
+    if (this.state.smallestUnconfTxSize > txSize) {
       this.setState({
-        minUnconfTxSize: txSize
+        smallestUnconfTxSize: txSize
       })
     }
   }
@@ -65,12 +72,8 @@ class App extends Component {
     this.connection = new WebSocket('wss://ws.blockchain.info/inv')
     this.connection.onmessage = evt => { 
       var msgObj = JSON.parse(evt.data)
-      // use to debug block data
-      // if (i > 10) {
-      //   this.connection.send(JSON.stringify({"op":"ping_block"}))
-      //   i = 0
-      // }
-      // i += 1
+      this.limitCalls(50, this.state.unconfirmedTxs)
+
       if (msgObj.op === 'utx') {
         var txSize = msgObj.x.size
         this.setMaxTxSize(txSize)
@@ -88,8 +91,10 @@ class App extends Component {
         console.log('#tx:' + msgObj.x.nTx)
         console.log('blockSize:' + msgObj.x.size)
         this.setState({
-          // TODO reset other states
           unconfirmedTxs: [],
+          totalUnconfirmedTxSize: 0,
+          unconfirmedTxSizes: [],
+          avgUnconfTxSize: 0,
           blocks: this.state.blocks.concat([msgObj]),
           totalUnconfirmedTxSize: 0,
           currentBlockHeight: msgObj.x.height
@@ -99,7 +104,7 @@ class App extends Component {
     
     this.connection.onopen = () => {
       // TODO set state with these functions
-      this.fetchMempoolSize()
+      this.setMempoolSize()
       this.fetchMempoolTxCount()
       // subscribe to unconfirmed transactions
       this.connection.send(JSON.stringify({"op":"unconfirmed_sub"}))
@@ -123,7 +128,7 @@ class App extends Component {
             <p>{this.state.currentBlockHeight}</p>
           </div>
           <div className="total-unconf-tx-size">
-            <p>Total Size of Unconfirmed Transactions:</p>
+            <p>Total Size of Unconfirmed Transactions This Block:</p>
             <p>{this.state.totalUnconfirmedTxSize}</p>
           </div>
         {/*  <div className="unconf-tx-sizes">
@@ -132,16 +137,16 @@ class App extends Component {
           </div>
         */}
           <div className="avg-unconf-tx-size">
-            <p>Average Unconfirmed Transaction Size:</p>
+            <p>Average Unconfirmed Transaction Size This Block:</p>
             <p>{this.state.avgUnconfTxSize}</p>
           </div>
-          <div className="max-unconf-tx-size">
-            <p>Maximum Unconfirmed Transaction Size:</p>
-            <p>{this.state.maxUnconfTxSize}</p>
+          <div className="largest-unconf-tx-size">
+            <p>Largest Unconfirmed Transaction Size This Block:</p>
+            <p>{this.state.largestUnconfTxSize}</p>
           </div>
-          <div className="max-unconf-tx-size">
-            <p>Minimum Unconfirmed Transaction Size:</p>
-            <p>{this.state.minUnconfTxSize}</p>
+          <div className="smallest-unconf-tx-size">
+            <p>Smallest Unconfirmed Transaction Size This Block:</p>
+            <p>{this.state.smallestUnconfTxSize}</p>
           </div>
           <div className="mempool-size">
             <p>Mempool Size:</p>
