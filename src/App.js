@@ -1,8 +1,42 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types';
 import logo from './logo.svg'
 import './App.css'
 import request from 'superagent';
+import ReactDOM from 'react-dom'
+import TransitionGroup from 'react-transition-group/TransitionGroup'
+import anime from 'animejs'
 // import request from 'superagent-bluebird-promise'
+
+
+let currentAnimation
+
+const animateIn = (gridContainer) => {
+//   clearCurrentAnimation()
+  const cards = gridContainer.querySelectorAll('.mempool-size')
+  currentAnimation = anime.timeline()
+  .add({
+    targets: cards,
+    opacity: 0,
+    duration: 1
+  })
+}
+
+const AnimatedGrid = props => {
+  return (
+    <TransitionGroup>{
+      props.items.length
+        ? <App items={props.items} key='App' />
+      : <div />
+    }
+    </TransitionGroup>
+  )
+}
+
+AnimatedGrid.props = {
+  items: PropTypes.array.isRequired
+}
+
 
 class App extends Component {
   constructor() {
@@ -101,7 +135,7 @@ class App extends Component {
         })
       }
     }
-    
+            
     this.connection.onopen = () => {
       // TODO set state with these functions
       this.setMempoolSize()
@@ -114,6 +148,14 @@ class App extends Component {
       this.connection.send(JSON.stringify({"op":"blocks_sub"}))
     }
   }
+
+  componentDidAppear () {
+    animateIn(ReactDOM.findDOMNode(this))
+  }
+  componentDidEnter () {
+    animateIn(ReactDOM.findDOMNode(this))
+  }
+  
 
   render() {
     return (
@@ -164,3 +206,15 @@ class App extends Component {
 }
 
 export default App
+
+anime({
+  targets: '.mempool-size',
+  translateX: [
+    { value: 100, duration: 1200 },
+    { value: 0, duration: 800 }
+  ],
+  rotate: '1turn',
+  backgroundColor: '#FFF',
+  duration: 2000,
+  loop: true
+});
