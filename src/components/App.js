@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Anime from 'react-anime';
-import logo from './logo.svg'
-import './App.css'
+import logo from '../logo.svg'
+import '../App.css'
 
 class App extends Component {
   constructor() {
