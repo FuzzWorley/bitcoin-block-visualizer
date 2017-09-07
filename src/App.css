@@ -1,4 +1,5 @@
-.App {
+.App,
+.Mempool {
   text-align: center;
 }
 
@@ -21,4 +22,16 @@
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+.red {
+  border: 5px solid red;
+}
+
+.green {
+  border: 5px solid green;
+}
+
+.blue {
+  border: 5px solid blue;
 }

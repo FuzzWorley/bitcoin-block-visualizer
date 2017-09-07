@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
+import Anime from 'react-anime';
 import logo from './logo.svg'
 import './App.css'
-import request from 'superagent';
-// import request from 'superagent-bluebird-promise'
 
 class App extends Component {
   constructor() {
@@ -15,35 +14,8 @@ class App extends Component {
       currentBlockHeight: 0,
       avgUnconfTxSize: 0,
       largestUnconfTxSize: 0,
-      smallestUnconfTxSize: 10000000,
-      mempoolSizeInMb: 0,
-      mempoolTxCount: 0
+      smallestUnconfTxSize: 10000000
     }
-  }
-
-  limitCalls(interval, unconfTxs) {
-    if (unconfTxs.length % interval === 0) {
-      this.setMempoolSize()
-    }
-  }
-
-  setMempoolSize() {
-    request.get('https://blockchain.info/charts/mempool-size?format=json&cors=true')
-    .end(function(err, response){
-      var array = response.body.values
-      var size = array[array.length - 1].y
-      var sizeInMb = size / 1000000
-      this.setState({mempoolSizeInMb: sizeInMb})
-    }.bind(this))
-  }
-
-  fetchMempoolTxCount() {
-    request.get('https://blockchain.info/charts/mempool-count?format=json&cors=true')
-    .end(function(err, response){
-      var array = response.body.values
-      var txCount = array[array.length - 1].y
-      return txCount
-    })
   }
 
   getAvgTxSize(txs) {
@@ -72,7 +44,6 @@ class App extends Component {
     this.connection = new WebSocket('wss://ws.blockchain.info/inv')
     this.connection.onmessage = evt => { 
       var msgObj = JSON.parse(evt.data)
-      this.limitCalls(50, this.state.unconfirmedTxs)
 
       if (msgObj.op === 'utx') {
         var txSize = msgObj.x.size
@@ -103,9 +74,6 @@ class App extends Component {
     }
     
     this.connection.onopen = () => {
-      // TODO set state with these functions
-      this.setMempoolSize()
-      this.fetchMempoolTxCount()
       // subscribe to unconfirmed transactions
       this.connection.send(JSON.stringify({"op":"unconfirmed_sub"}))
       // get last block data
@@ -148,12 +116,6 @@ class App extends Component {
             <p>Smallest Unconfirmed Transaction Size This Block:</p>
             <p>{this.state.smallestUnconfTxSize}</p>
           </div>
-          <div className="mempool-size">
-            <p>Mempool Size:</p>
-            <p>{this.state.mempoolSizeInMb}</p>
-          </div>
-
-
         </div>
         {/*
         <ul>{ this.state.unconfirmedTxs.slice().map( (msg, idx) => <li key={'msg-' + idx }>{ JSON.stringify(msg) }</li> )}</ul> 
