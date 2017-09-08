@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import Anime from 'react-anime';
 import request from 'superagent';
+import cloud from '../assets/images/cloud.svg'
+import '../assets/styles/Mempool.css'
 
 class Mempool extends Component {
   constructor() {
@@ -36,7 +38,9 @@ class Mempool extends Component {
     })
   }
 
-
+  translateMempoolSizeToScale() {
+    return this.state.mempoolSizeInMb / 5
+  }
 
   componentDidMount(){
     this.setMempoolSize()
@@ -46,9 +50,16 @@ class Mempool extends Component {
   render() {
     return (
       <div className="Mempool">
-        <div className="mempool-size">
-          <p>Mempool Size:</p>
-          <p>{this.state.mempoolSizeInMb}</p>
+        <div className="mempool-container">
+          <Anime scale={this.translateMempoolSizeToScale()}>
+            <div className="mempool-img-container">
+              <img src={cloud} className="mempool-img" alt="logo" />
+            </div>
+          </Anime>
+          <div className="mempool-size-text">
+            <p>Mempool Size:</p>
+            <p>{this.state.mempoolSizeInMb}</p>
+          </div>
         </div>
         <Anime delay={(e, i) => i * 500}
                scale={[.1, .9]}>

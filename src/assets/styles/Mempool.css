@@ -1,0 +1,19 @@
+.mempool-container {
+  position: relative;
+}
+
+.mempool-img-container {
+  width: 50vw;
+  display: inline-block;
+}
+
+.mempool-img {
+  width: 100%
+}
+
+.mempool-size-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
