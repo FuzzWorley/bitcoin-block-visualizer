@@ -1,19 +1,72 @@
+.text {
+  width: 100%;
+  margin: 0 auto;
+  display: inline-block;
+  text-align: center;
+}
+
+.title {
+  font-size: 30px;
+}
+
+.number {
+  font-size: 70px;
+  font-weight: 800;
+  text-shadow: 0px 20px 70px #403737;
+}
+
+
+
+
+/*** Mempool ***/
+
 .mempool-container {
-  position: relative;
 }
 
 .mempool-img-container {
-  width: 50vw;
+  width: 100vw;
+  height: 0px;
   display: inline-block;
+  position: absolute;
+  bottom: 0;
+  background-image: -ms-linear-gradient(top, #A0FF70 0%, #25C4B4 100%);
+  background-image: -moz-linear-gradient(top, #A0FF70 0%, #25C4B4 100%);	
+  background-image: -o-linear-gradient(top, #A0FF70 0%, #25C4B4 100%);	
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #A0FF70), color-stop(100, #25C4B4));
+  background-image: -webkit-linear-gradient(top, #A0FF70 0%, #25C4B4 100%);	
+  background-image: linear-gradient(to bottom, #A0FF70 0%, #25C4B4 100%);
 }
 
 .mempool-img {
   width: 100%
 }
 
-.mempool-size-text {
+.mem-text {
+  top: 25%;
+  position: relative;
+}
+
+
+
+
+/*** Transactions ***/
+
+.data-container {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 15%;
+  left: 0;
+  right: 0;
+}
+
+
+.txn-container {
+  width: 10px;
+  height: 10px;
+  background-color: #ff7530;
+  border-radius: 50%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  z-index: -100;
 }

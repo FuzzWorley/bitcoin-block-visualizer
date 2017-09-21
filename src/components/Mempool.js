@@ -39,7 +39,7 @@ class Mempool extends Component {
   }
 
   translateMempoolSizeToScale() {
-    return this.state.mempoolSizeInMb / 5
+    return this.state.mempoolSizeInMb * 100
   }
 
   componentDidMount(){
@@ -51,22 +51,17 @@ class Mempool extends Component {
     return (
       <div className="Mempool">
         <div className="mempool-container">
-          <Anime scale={this.translateMempoolSizeToScale()}>
+          <Anime height={this.translateMempoolSizeToScale()}
+          		 easing="easeOutQuart"
+          >
             <div className="mempool-img-container">
-              <img src={cloud} className="mempool-img" alt="logo" />
+	          <div className="text mem-text">
+	            <p className="title">Mempool Size</p>
+	            <p className="number">{this.state.mempoolSizeInMb} mb</p>
+	          </div>
             </div>
           </Anime>
-          <div className="mempool-size-text">
-            <p>Mempool Size:</p>
-            <p>{this.state.mempoolSizeInMb}</p>
-          </div>
         </div>
-        <Anime delay={(e, i) => i * 500}
-               scale={[.1, .9]}>
-          <div className="blue"/>
-          <div className="green"/>
-          <div className="red"/>
-        </Anime>
       </div>
     )
   }

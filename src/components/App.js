@@ -90,20 +90,28 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Welcome to React</h2>
         </div>
-        <div className="container">
-          <div className="current-block-height">
+        <div className="data-container">
+          {/* <div className="current-block-height">
             <p>Current Block Height:</p>
             <p>{this.state.currentBlockHeight}</p>
           </div>
-          <div className="total-unconf-tx-size">
-            <p>Total Size of Unconfirmed Transactions This Block:</p>
-            <p>{this.state.totalUnconfirmedTxSize}</p>
+          */}
+          <div className="text title">
+            <p>Total Size of Unconfirmed Transactions This Block</p>
           </div>
+          <Anime scale={this.state.totalUnconfirmedTxSize / 2000}
+                 easing="easeOutQuart"
+          >
+          <div className="txn-container">
+          </div>
+          </Anime>
+	      <div className="total-unconf-tx-size">
+	        <p className="number text">{this.state.totalUnconfirmedTxSize} kb</p>
+	      </div> 
         {/*  <div className="unconf-tx-sizes">
             <p>Transaction Sizes:</p>
             <p>{this.state.unconfirmedTxSizes}</p>
           </div>
-        */}
           <div className="avg-unconf-tx-size">
             <p>Average Unconfirmed Transaction Size This Block:</p>
             <p>{this.state.avgUnconfTxSize}</p>
@@ -116,6 +124,7 @@ class App extends Component {
             <p>Smallest Unconfirmed Transaction Size This Block:</p>
             <p>{this.state.smallestUnconfTxSize}</p>
           </div>
+        */}
         </div>
         {/*
         <ul>{ this.state.unconfirmedTxs.slice().map( (msg, idx) => <li key={'msg-' + idx }>{ JSON.stringify(msg) }</li> )}</ul> 
